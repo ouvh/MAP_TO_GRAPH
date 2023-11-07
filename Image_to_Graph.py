@@ -118,7 +118,7 @@ def Build_Graph(image_link) :
 
     def skeletonize(neighboor:NEIGHBORHOOD):
         K = []
-        for generation in range(0,len(neighboor.generations)-1,10):
+        for generation in range(0,len(neighboor.generations)-1,1):
             aligned = organize_neighbour(neighboor.generations[generation].children)
             K.append(aligned[len(aligned)//2])
         

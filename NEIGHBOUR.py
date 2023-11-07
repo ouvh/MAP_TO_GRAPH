@@ -5,29 +5,7 @@ import time,pickle,random
 import Graph
 
 
-def interpolate_line(P):
-
-    X = list(map(lambda t:t[0],P))
-    Y = list(map(lambda t:t[1],P))
-
-
-    n = len(X)
-    sum_x = sum(X)
-    sum_y = sum(Y)
-    sum_xy = sum(x_i * y_i for x_i, y_i in zip(X, Y))
-    sum_x_squared = sum(x_i**2 for x_i in X)
-
-    if (n * sum_x_squared - sum_x**2) == 0:
-        return 0
-    m = (n * sum_xy - sum_x * sum_y) / (n * sum_x_squared - sum_x**2)
-    b = (sum_y - m * sum_x) / n
-
-    return m
-
-
-
-
-
+    
 
 
 image_file = "map.png"
@@ -66,13 +44,28 @@ def are_neighbour(L1,L2):
             if is_neighbour(i,j):
                 return True
     return False
+#############
+
+
 
 def organize_neighbour(L):
-    m =  interpolate_line(L)
-    if m > 1:
-        return sorted(L,key=lambda p:p[1])
-    else:
-        return sorted(L,key=lambda p:p[0])
+    D = Graph.Graph()
+    for i in L:
+        D.addVertex((i[0],i[1],i[2]))
+    
+    for i in L:
+        for j in L:
+            if is_neighbour(i,j):
+                D.addEdge()
+
+
+
+
+
+   
+######################
+
+
 
 def assemble(L):
     assemble = list(map(lambda x:[x],L))
@@ -121,7 +114,7 @@ class NEIGHBORHOOD:
 
 def skeletonize(neighboor:NEIGHBORHOOD):
     K = []
-    for generation in range(0,len(neighboor.generations)-1,10):
+    for generation in range(0,len(neighboor.generations)-1,1):
         aligned = organize_neighbour(neighboor.generations[generation].children)
         K.append(aligned[len(aligned)//2])
     
@@ -237,8 +230,9 @@ while run:
         display.blit(imagee,(x,y))
         for i in MAP:
             for NEIGHBOUR in MAP[i]:
-                color = (random.randint(0,255),random.randint(0,255),random.randint(0,255))
                 for GENERAT in NEIGHBOUR.generations:
+                    color = (random.randint(0,255),random.randint(0,255),random.randint(0,255))
+
                     for child in GENERAT.children:
                         pygame.draw.circle(display,color,(child[0]*scale + x,child[1]*scale + y),5)
         pygame.display.flip()
@@ -311,8 +305,9 @@ while run:
 
 for i in MAP:
     for NEIGHBOUR in MAP[i]:
-        color = (random.randint(0,255),random.randint(0,255),random.randint(0,255))
         for GENERAT in NEIGHBOUR.generations:
+            color = (random.randint(0,255),random.randint(0,255),random.randint(0,255))
+
             for child in GENERAT.children:
                 pygame.draw.circle(imagee,color,(child[0]*scale ,child[1]*scale ),5)
 
