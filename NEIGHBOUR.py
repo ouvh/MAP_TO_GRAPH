@@ -69,7 +69,7 @@ def are_neighbour(L1,L2):
 
 def organize_neighbour(L):
     m =  interpolate_line(L)
-    if abs(m) > 1:
+    if m > 1:
         return sorted(L,key=lambda p:p[1])
     else:
         return sorted(L,key=lambda p:p[0])
@@ -121,7 +121,7 @@ class NEIGHBORHOOD:
 
 def skeletonize(neighboor:NEIGHBORHOOD):
     K = []
-    for generation in range(0,len(neighboor.generations)-1,1):
+    for generation in range(0,len(neighboor.generations)-1,10):
         aligned = organize_neighbour(neighboor.generations[generation].children)
         K.append(aligned[len(aligned)//2])
     
