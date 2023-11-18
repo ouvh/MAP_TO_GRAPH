@@ -38,9 +38,11 @@ class Scene:
         
         for s in WWW:
             self.objects.append(base_model_no_texturing(np.array(s),shader_program.ShaderProgram(app.context,"default_no_texturing"),app,(1,0,0)))
-
+        
         for s in UUU:
             self.objects.append(base_model_no_texturing(np.array(s),shader_program.ShaderProgram(app.context,"default_no_texturing"),app,(0,1,0)))
+        
+
 
 
 

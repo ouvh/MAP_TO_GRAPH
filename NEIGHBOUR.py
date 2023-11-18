@@ -49,14 +49,8 @@ def are_neighbour(L1,L2):
 
 
 def organize_neighbour(L):
-    D = Graph.Graph()
-    for i in L:
-        D.addVertex((i[0],i[1],i[2]))
     
-    for i in L:
-        for j in L:
-            if is_neighbour(i,j):
-                D.addEdge()
+   return L
 
 
 

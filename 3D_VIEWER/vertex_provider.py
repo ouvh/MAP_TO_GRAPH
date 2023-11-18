@@ -4,7 +4,6 @@ import random,time
 
 
 def get_sphere_vertex(center:tuple,radius:float,layer_precision:float,curve_precision:float) -> list[tuple]:
-    #x  = (math.sqrt(radius**2 - (start + i*((end-start)/layer_precision) - center[2])**2)) * math.cos(j*((2*math.pi)/curve_precision) + (((2*math.pi)/curve_precision)/2 if i%2==0 else 0))
 
     limit_error = 0
     start = center[2] - radius + limit_error
@@ -19,14 +18,77 @@ def get_sphere_vertex(center:tuple,radius:float,layer_precision:float,curve_prec
         for j in range(curve_precision):
             triangles.append((layer[i+1][j],layer[i][j],layer[i+1][(j+1)%curve_precision])[::-1])
        
-    
     vertex = sum(triangles,start=tuple())
+
+    
     normals = [(1,1,1) for _ in range(len(vertex))]
 
     vertex = numpy.array(vertex, dtype='f4')
     normals = numpy.array(normals, dtype='f4')
     vertex_data = numpy.hstack([normals, vertex])
     return vertex_data
+
+
+
+
+def get_icosahedron(s,center,):
+    rotation_vector = (0,0,1)
+    angle = 2*(math.pi/5)
+    temp_angle = math.pi/5
+    inside_length = s / (2 * math.sin(math.pi/5))
+    h = (s**2 - inside_length**2)**0.5
+
+    top_center = (center[0],center[1],center[2] + 2*h)
+    top_middle_center = (center[0],center[1],center[2] + h)
+    bottom_center = (center[0],center[1],center[2] - 2*h)
+    bottom_middle_center = (center[0],center[1],center[2] - h)
+    
+
+    rotation_matrice = [
+        [rotation_vector[0]**2 + (1 - rotation_vector[0]**2) * math.cos(angle), rotation_vector[0]*rotation_vector[1]*(1 - math.cos(angle)) - rotation_vector[2]*math.sin(angle), rotation_vector[0]*rotation_vector[2]*(1 - math.cos(angle)) + rotation_vector[1]*math.sin(angle)],
+        [rotation_vector[0]*rotation_vector[1]*(1 - math.cos(angle)) + rotation_vector[2]*math.sin(angle), rotation_vector[1]**2 + (1 - rotation_vector[1]**2) * math.cos(angle), rotation_vector[1]*rotation_vector[2]*(1 - math.cos(angle)) - rotation_vector[0]*math.sin(angle)],
+        [rotation_vector[0]*rotation_vector[2]*(1 - math.cos(angle)) - rotation_vector[1]*math.sin(angle), rotation_vector[1]*rotation_vector[2]*(1 - math.cos(angle)) + rotation_vector[0]*math.sin(angle), rotation_vector[2]**2 + (1 - rotation_vector[2]**2) * math.cos(angle)]
+    ]
+    temp = [
+        [rotation_vector[0]**2 + (1 - rotation_vector[0]**2) * math.cos(temp_angle), rotation_vector[0]*rotation_vector[1]*(1 - math.cos(temp_angle)) - rotation_vector[2]*math.sin(temp_angle), rotation_vector[0]*rotation_vector[2]*(1 - math.cos(temp_angle)) + rotation_vector[1]*math.sin(temp_angle)],
+        [rotation_vector[0]*rotation_vector[1]*(1 - math.cos(temp_angle)) + rotation_vector[2]*math.sin(temp_angle), rotation_vector[1]**2 + (1 - rotation_vector[1]**2) * math.cos(temp_angle), rotation_vector[1]*rotation_vector[2]*(1 - math.cos(temp_angle)) - rotation_vector[0]*math.sin(temp_angle)],
+        [rotation_vector[0]*rotation_vector[2]*(1 - math.cos(temp_angle)) - rotation_vector[1]*math.sin(temp_angle), rotation_vector[1]*rotation_vector[2]*(1 - math.cos(temp_angle)) + rotation_vector[0]*math.sin(temp_angle), rotation_vector[2]**2 + (1 - rotation_vector[2]**2) * math.cos(temp_angle)]
+    ]
+
+
+
+    top_points = []
+
+    rotating_vector = (inside_length,0,0)
+    for i in range(5):
+        top_points.append(somme_de_vecteur(top_middle_center,rotating_vector))
+        rotating_vector = produit_matrice(rotation_matrice,rotating_vector)
+    
+
+    bottom_points = []
+    rotating_vector = produit_matrice(temp,(inside_length,0,0))
+    for i in range(5):
+        bottom_points.append(somme_de_vecteur(bottom_middle_center,rotating_vector))
+        rotating_vector = produit_matrice(rotation_matrice,rotating_vector)
+
+    triangles = [(top_points[0],top_points[1],top_center),(top_points[1],top_points[2],top_center),(top_points[2],top_points[3],top_center),(top_points[3],top_points[4],top_center),(top_points[4],top_points[0],top_center),
+                 (bottom_points[0],bottom_center,bottom_points[1]),(bottom_points[1],bottom_center,bottom_points[2]),(bottom_points[2],bottom_center,bottom_points[3]),(bottom_points[3],bottom_center,bottom_points[4]),(bottom_points[4],bottom_center,bottom_points[0]),
+                 (bottom_points[4],top_points[0],bottom_points[0]),(bottom_points[0],top_points[1],bottom_points[1]),(bottom_points[1],top_points[2],bottom_points[2]),(bottom_points[2],top_points[3],bottom_points[3]),(bottom_points[3],top_points[4],bottom_points[4]),
+                 (top_points[0],bottom_points[0],top_points[1]),(top_points[1],bottom_points[1],top_points[2]),(top_points[2],bottom_points[2],top_points[3]),(top_points[3],bottom_points[3],top_points[4]),(top_points[4],bottom_points[4],top_points[0])]
+
+    vertex = sum(triangles,start=tuple())
+    normals = [(random.uniform(0,1),random.uniform(0,1),random.uniform(0,1)) for _ in range(len(vertex))]
+
+    vertex = numpy.array(vertex, dtype='f4')
+    normals = numpy.array(normals, dtype='f4')
+    vertex_data = numpy.hstack([normals, vertex])
+    
+    return vertex_data
+
+
+
+
+
 
 
 def get_tunnel(center1:tuple,center2:tuple,thickness:float) -> list[tuple]:

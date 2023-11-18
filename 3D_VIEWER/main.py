@@ -48,6 +48,18 @@ class GraphicsEngine:
                 self.WIN_SIZE = event.size
                 self.camera.aspect_ratio = self.WIN_SIZE[0] / self.WIN_SIZE[1]
                 self.camera.m_proj = self.camera.get_projection_matrix()
+            
+            elif event.type == pg.KEYDOWN and event.key == pg.K_p:
+
+                pg.event.set_grab(True)
+                pg.mouse.set_visible(False)
+            
+            elif event.type == pg.KEYDOWN and event.key == pg.K_o:
+
+                pg.event.set_grab(False)
+                pg.mouse.set_visible(True)
+            
+
 
     def render(self):
         # clear framebuffer

@@ -9,8 +9,10 @@ with open("EEEE.txt","rb") as file:
 o = 0
 SPHERESSS = []
 EDGESSSS = []
+
 for i in graph:
-    SPHERESSS.append(vertex_provider.get_sphere_vertex((i[0]/a,0,i[1]/a),0.5,10,10))
+    #SPHERESSS.append(vertex_provider.get_sphere_vertex((i[0]/a,0,i[1]/a),0.5,5,5))
+    SPHERESSS.append(vertex_provider.get_icosahedron(1,(i[0]/a,0,i[1]/a)))
     o += 1
     for j in graph[i]:
         if META.get((i,j)) or META.get((j,i)):
