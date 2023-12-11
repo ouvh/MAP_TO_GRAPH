@@ -77,7 +77,8 @@ def get_icosahedron(s,center,):
                  (top_points[0],bottom_points[0],top_points[1]),(top_points[1],bottom_points[1],top_points[2]),(top_points[2],bottom_points[2],top_points[3]),(top_points[3],bottom_points[3],top_points[4]),(top_points[4],bottom_points[4],top_points[0])]
 
     vertex = sum(triangles,start=tuple())
-    normals = [(random.uniform(0,1),random.uniform(0,1),random.uniform(0,1)) for _ in range(len(vertex))]
+    #normals = [(random.uniform(0,1),random.uniform(0,1),random.uniform(0,1)) for _ in range(len(vertex))]
+    normals = sum([(calculate_normal(i),)*3 for i in triangles],start=tuple())
 
     vertex = numpy.array(vertex, dtype='f4')
     normals = numpy.array(normals, dtype='f4')
@@ -176,3 +177,50 @@ def produit_matrice(matrice,vect):
 
 def somme_de_vecteur(ver1,ver2):
     return (ver1[0] + ver2[0],ver1[1] + ver2[1],ver1[2] + ver2[2])
+
+def calculate_normal(points):
+    vector = [(points[1][0] - points[0][0],points[1][1] - points[0][1],points[1][2] - points[0][2]),(points[2][0] - points[0][0],points[2][1] - points[0][1],points[2][2] - points[0][2])]
+    vectori = (vector[0][1]*vector[1][2] - vector[1][1]*vector[0][2],  - vector[0][0]*vector[1][2]  + vector[1][0]*vector[0][2],vector[0][0]*vector[1][1] - vector[1][0]*vector[0][1])
+    norme = (vectori[0]**2 + vectori[1]**2)**0.5
+    return (vectori[0]/norme,vectori[1]/norme,vectori[2]/norme)
+
+def blender_test():
+    
+
+    file1 = "C:\\Users\\Oussama Laaroussi\\Desktop\\blender_module\\vertices.txt"
+    file2 = "C:\\Users\\Oussama Laaroussi\\Desktop\\blender_module\\faces.txt"
+
+
+
+    def get_list(txtname):
+        listname = []
+        with open(txtname) as f:
+            for line in f:
+                line = line.rstrip(",\r\n") . replace("(","").replace(")","").replace(" ","")
+                row  = list(line.split(","))
+                listname. append (row)
+        listname = [[float(j) for j in i] for i in listname]
+        return listname
+
+
+    points = get_list(file1)
+    print(points)
+    triangles = list(map(lambda x:(points[int(x[0])],points[int(x[1])],points[int(x[2])]),get_list(file2)))
+
+    vertex = sum(triangles,start=tuple())
+    normals = [(random.uniform(0,1),random.uniform(0,1),random.uniform(0,1)) for _ in range(len(vertex))]
+
+    vertex = numpy.array(vertex, dtype='f4')
+    normals = numpy.array(normals, dtype='f4')
+    vertex_data = numpy.hstack([normals, vertex])
+    
+    return vertex_data
+
+    
+
+
+
+
+
+
+

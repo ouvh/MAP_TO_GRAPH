@@ -48,10 +48,14 @@ def are_neighbour(L1,L2):
 
 
 
-def organize_neighbour(L):
-    
+def organize_neighbour(L):    
    return L
 
+
+def barycentre(pp):
+    L = list(map(lambda h:complex(h[0],h[1]),pp))
+    barycentree = sum(L,start=0)/len(L)
+    return (barycentree.real,barycentree.imag)
 
 
 
@@ -95,10 +99,13 @@ class GENERATION:
 
 
 
+
+
 class NEIGHBORHOOD:
     def __init__(self) -> None:
         self.generations = list()
         self.frontiere = {}
+        self.finished = 0
     
     def copy(self):
         S = NEIGHBORHOOD()
@@ -107,7 +114,7 @@ class NEIGHBORHOOD:
     
 
 def skeletonize(neighboor:NEIGHBORHOOD):
-    K = []
+    """ K = []
     for generation in range(0,len(neighboor.generations)-1,1):
         aligned = organize_neighbour(neighboor.generations[generation].children)
         K.append(aligned[len(aligned)//2])
@@ -115,7 +122,17 @@ def skeletonize(neighboor:NEIGHBORHOOD):
     aligned = organize_neighbour(neighboor.generations[-1].children)
     K.append(aligned[len(aligned)//2])
     
+    neighbour.generations = K"""
+   
+    K = []
+    for generation in range(0,len(neighboor.generations)-1,1):
+        aligned = organize_neighbour(neighboor.generations[generation].children)
+        K.append(barycentre(aligned))
+    
+    aligned = organize_neighbour(neighboor.generations[-1].children)
+    K.append(barycentre(aligned))    
     neighbour.generations = K
+   
 
 
 display = pygame.display.set_mode(img.size)
@@ -299,8 +316,10 @@ while run:
 
 for i in MAP:
     for NEIGHBOUR in MAP[i]:
+        color = (random.randint(0,255),random.randint(0,255),random.randint(0,255))
+
         for GENERAT in NEIGHBOUR.generations:
-            color = (random.randint(0,255),random.randint(0,255),random.randint(0,255))
+
 
             for child in GENERAT.children:
                 pygame.draw.circle(imagee,color,(child[0]*scale ,child[1]*scale ),5)
@@ -388,12 +407,17 @@ for i in MAP:
         
         for frontiere in neighbour.frontiere:
             aligned = organize_neighbour(frontiere.children)
-            aligned = aligned[len(aligned)//2]
+            aligned = barycentre(aligned)
+            pygame.draw.circle(imagee,"yellow",(aligned[0]*scale,aligned[1]*scale),10)
+
+
 
             GRAPH[neighbour.generations[-1]][aligned] = 1
 
             if not GRAPH.get(aligned):
+
                 GRAPH[aligned] = {neighbour.generations[-1]:1}
+
             else:
                 GRAPH[aligned].update({neighbour.generations[-1]:1})
         
@@ -423,7 +447,6 @@ for i in GRAPH:
     for j in GRAPH[i]:
         pygame.draw.line(imagee,"green",(i[0]*scale,i[1]*scale),(j[0]*scale,j[1]*scale),2)
 
-pygame.image.save(imagee, "DEBUGGGG.jpeg")
-
+pygame.image.save(imagee, "DEBUG1GGG.jpeg")
 
 

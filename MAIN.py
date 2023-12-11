@@ -1,4 +1,3 @@
-import time
 import numpy as np
 from PIL import Image
 from Graph import Vertex, Graph
@@ -26,7 +25,6 @@ vertex_selection_mode = "source"
 
 
 while run:
-    pygame.time.delay(166)
     display.blit(imagg, (0, 0))
 
 
@@ -62,5 +60,4 @@ while run:
         for i in range(len(shortest_path)-1,-1,-1):
                 pygame.draw.circle(display, (40,10,255), (shortest_path[i][0], shortest_path[i][1]), 2)
                 pygame.display.flip()
-                time.sleep(0.2)
 pygame.quit()

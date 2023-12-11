@@ -27,6 +27,9 @@ class Scene:
                 self.objects.append(base_model_no_texturing(vertex_provider.get_tunnel((key.m_x,key.m_y,key.m_z),(edg.m_destination.m_x,edg.m_destination.m_y,edg.m_destination.m_z),0.1),shader_program.ShaderProgram(app.context,"default_no_texturing"),app,(0,1,0)))
         """
         self.objects = []
+
+
+        self.objects.append(base_model_no_texturing(vertex_provider.get_icosahedron(100,(0,0,0)),shader_program.ShaderProgram(app.context,"default_no_texturing"),app,(1,0,0)))
         
         with open("WWW.txt","rb") as file:
             WWW = pickle.load(file)

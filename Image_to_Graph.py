@@ -7,38 +7,25 @@ import pickle
 
 
 def Build_Graph(image_link) :
-    
-    def interpolate_line(P):
-
-        X = list(map(lambda t:t[0],P))
-        Y = list(map(lambda t:t[1],P))
-
-
-        n = len(X)
-        sum_x = sum(X)
-        sum_y = sum(Y)
-        sum_xy = sum(x_i * y_i for x_i, y_i in zip(X, Y))
-        sum_x_squared = sum(x_i**2 for x_i in X)
-
-        if (n * sum_x_squared - sum_x**2) == 0:
-            return 0
-        m = (n * sum_xy - sum_x * sum_y) / (n * sum_x_squared - sum_x**2)
-        b = (sum_y - m * sum_x) / n
-
-        return m
-
-    
     from PIL import Image
     import cv2,numpy
     import time,pickle,random
     import Graph
 
-    image_file = image_link
+
+        
 
 
-
-
+    image_file = "map.png"
+    scale = 20
+    x,y = 0,0
     img = Image.open(image_file)
+    
+
+
+
+
+
     image = cv2.imread(image_file)
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY) 
@@ -64,13 +51,26 @@ def Build_Graph(image_link) :
                 if is_neighbour(i,j):
                     return True
         return False
+    #############
 
-    def organize_neighbour(L):
-        m =  interpolate_line(L)
-        if m > 1:
-            return sorted(L,key=lambda p:p[1])
-        else:
-            return sorted(L,key=lambda p:p[0])
+
+
+    def organize_neighbour(L):    
+        return L
+
+
+    def barycentre(pp):
+        L = list(map(lambda h:complex(h[0],h[1]),pp))
+        barycentree = sum(L,start=0)/len(L)
+        return (barycentree.real,barycentree.imag)
+
+
+
+
+    
+    ######################
+
+
 
     def assemble(L):
         assemble = list(map(lambda x:[x],L))
@@ -99,6 +99,7 @@ def Build_Graph(image_link) :
     class GENERATION:
         def __init__(self,children:list[tuple]) -> None:
             self.children = children
+            self.chosen = False
         
         def __hash__(self) -> int:
             return hash(self.children[0])
@@ -117,15 +118,26 @@ def Build_Graph(image_link) :
         
 
     def skeletonize(neighboor:NEIGHBORHOOD):
-        K = []
+        """ K = []
         for generation in range(0,len(neighboor.generations)-1,1):
             aligned = organize_neighbour(neighboor.generations[generation].children)
             K.append(aligned[len(aligned)//2])
         
         aligned = organize_neighbour(neighboor.generations[-1].children)
         K.append(aligned[len(aligned)//2])
+        
+        neighbour.generations = K"""
     
+        K = []
+        for generation in range(0,len(neighboor.generations)-1,1):
+            aligned = organize_neighbour(neighboor.generations[generation].children)
+            K.append(barycentre(aligned))
+        
+        aligned = organize_neighbour(neighboor.generations[-1].children)
+        K.append(barycentre(aligned))    
         neighbour.generations = K
+    
+
 
 
     def leader_agent(point,ALL_CHILDREN={}):
@@ -197,8 +209,7 @@ def Build_Graph(image_link) :
                         Graph[skeleton[join]] = {skeleton[join+1],skeleton[join-1]}
             
         """
-        print(time.time() - start)
-
+        
         return neighbouhoods["Arrived"]
 
     BIJECTION = {}
@@ -215,8 +226,14 @@ def Build_Graph(image_link) :
                                 BIJECTION[child] = generation
 
 
-    #determine the frontiere of each neighbour
 
+        
+
+
+
+
+
+    #determine the frontiere of each neighbour
 
     for i in MAP:
         for neighbour in MAP[i]:
@@ -275,7 +292,7 @@ def Build_Graph(image_link) :
             
             for frontiere in neighbour.frontiere:
                 aligned = organize_neighbour(frontiere.children)
-                aligned = aligned[len(aligned)//2]
+                aligned = barycentre(aligned)
 
                 GRAPH[neighbour.generations[-1]][aligned] = 1
 
@@ -298,7 +315,11 @@ def Build_Graph(image_link) :
             graph.addEdge(Graph.Vertex((i[0],i[1],0)),(j[0],j[1],0))
 
 
+
     return graph
+
+
+
 
 
 

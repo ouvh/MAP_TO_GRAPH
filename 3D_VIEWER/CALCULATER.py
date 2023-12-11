@@ -1,5 +1,6 @@
 import vertex_provider
 import pickle
+import random
 
 a = 4
 META = {}
@@ -12,7 +13,7 @@ EDGESSSS = []
 
 for i in graph:
     #SPHERESSS.append(vertex_provider.get_sphere_vertex((i[0]/a,0,i[1]/a),0.5,5,5))
-    SPHERESSS.append(vertex_provider.get_icosahedron(1,(i[0]/a,0,i[1]/a)))
+    SPHERESSS.append(vertex_provider.get_icosahedron(0.5,(i[0]/a,0,i[1]/a)))
     o += 1
     for j in graph[i]:
         if META.get((i,j)) or META.get((j,i)):
@@ -24,12 +25,12 @@ for i in graph:
 WWW = []
 UUU = []
 
-for i in range(0,len(SPHERESSS)//5):
-    WWW.append(SPHERESSS[i:5*(i+1)])
+for i in range(0,len(SPHERESSS)//100):
+    WWW.append(SPHERESSS[i:100*(i+1)])
 
 
-for i in range(0,len(EDGESSSS)//5):
-    UUU.append(EDGESSSS[i:5*(i+1)])
+for i in range(0,len(EDGESSSS)//100):
+    UUU.append(EDGESSSS[i:100*(i+1)])
 
 
 with open("WWW.txt","wb") as file:
