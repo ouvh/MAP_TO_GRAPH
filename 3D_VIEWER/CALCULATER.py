@@ -2,7 +2,7 @@ import vertex_provider
 import pickle
 import random
 
-a = 4
+a = 1
 META = {}
 with open("EEEE.txt","rb") as file:
     graph = pickle.load(file)
@@ -25,12 +25,12 @@ for i in graph:
 WWW = []
 UUU = []
 
-for i in range(0,len(SPHERESSS)//100):
-    WWW.append(SPHERESSS[i:100*(i+1)])
+for i in range(0,len(SPHERESSS)//1000):
+    WWW.append(SPHERESSS[i:1000*(i+1)])
 
 
-for i in range(0,len(EDGESSSS)//100):
-    UUU.append(EDGESSSS[i:100*(i+1)])
+for i in range(0,len(EDGESSSS)//1000):
+    UUU.append(EDGESSSS[i:1000*(i+1)])
 
 
 with open("WWW.txt","wb") as file:

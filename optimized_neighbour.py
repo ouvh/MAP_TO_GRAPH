@@ -303,16 +303,6 @@ while run:
             break
 
 
-for i in MAP:
-    for NEIGHBOUR in MAP[i]:
-        color = (random.randint(0,255),random.randint(0,255),random.randint(0,255))
-
-        for GENERAT in NEIGHBOUR.generations:
-
-            for child in GENERAT.children:
-                pygame.draw.circle(imagee,color,(child[0]*scale ,child[1]*scale ),5)
-
-
 
 def border_children(L):
     bary = barycentre(L)
