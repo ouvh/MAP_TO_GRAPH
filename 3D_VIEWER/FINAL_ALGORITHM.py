@@ -294,14 +294,20 @@ for i in MAP:
         """
         
 
+networking_design = {}
+
+for i in GRAPH:
+    networking_design[(i[0],i[1])] = 0
+
+
 
 graph = Graph.Graph()
 for i in GRAPH:
-    graph.addVertex((i[0],i[1],0))
+    graph.addVertex((i[0],i[1],networking_design[(i[0],i[1])]))
 
 for i in GRAPH:
     for j in GRAPH[i]:
-        graph.addEdge(Graph.Vertex((i[0],i[1],0)),(j[0],j[1],0))
+        graph.addEdge(Graph.Vertex((i[0],i[1],networking_design[(i[0],i[1])])),(j[0],j[1],networking_design[(j[0],j[1])]))
 
 with open("EEEE.txt","wb") as file:
     pickle.dump(graph,file)

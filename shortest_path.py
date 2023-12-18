@@ -1,9 +1,12 @@
 from collections import defaultdict
 from queue import PriorityQueue
 from Graph import Graph,Vertex
+import pickle
 
 distances = defaultdict(lambda: float('inf'))
 predecessors = {}
+
+states = []
 
 
 class Couple(tuple) :
@@ -16,6 +19,7 @@ def Dijkstra(g,source,target) :
     pqueue.put(Couple((0,source)))
 
     while not pqueue.empty() :
+        states.append(predecessors.copy())
         current = pqueue.get()[1]
 
         if current ==  target : 
@@ -38,4 +42,16 @@ def Dijkstra(g,source,target) :
         current = predecessors[current]
     path.append(source)
     
+    with open("states.txt","wb") as file:
+        pickle.dump(states,file)
+    
     return path
+
+
+
+    
+
+
+
+
+

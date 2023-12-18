@@ -1,26 +1,19 @@
 import cv2
 
-import numpy as np
 from PIL import Image
-from Graph import Vertex, Graph
-import pickle
+import cv2,numpy
+import time,pickle,random
+import Graph
+
 
 
 def Build_Graph(image_link) :
-    from PIL import Image
-    import cv2,numpy
-    import time,pickle,random
-    import Graph
+    
 
-
-        
-
-
-    image_file = "map.png"
+    image_file = image_link
     scale = 20
     x,y = 0,0
     img = Image.open(image_file)
-    
 
 
 
@@ -67,11 +60,6 @@ def Build_Graph(image_link) :
 
 
 
-    
-    ######################
-
-
-
     def assemble(L):
         assemble = list(map(lambda x:[x],L))
         new = []
@@ -100,16 +88,16 @@ def Build_Graph(image_link) :
         def __init__(self,children:list[tuple]) -> None:
             self.children = children
             self.chosen = False
-        
+            self.frontiere = []
         def __hash__(self) -> int:
             return hash(self.children[0])
-
 
 
     class NEIGHBORHOOD:
         def __init__(self) -> None:
             self.generations = list()
             self.frontiere = {}
+            self.finished = 0
         
         def copy(self):
             S = NEIGHBORHOOD()
@@ -118,15 +106,7 @@ def Build_Graph(image_link) :
         
 
     def skeletonize(neighboor:NEIGHBORHOOD):
-        """ K = []
-        for generation in range(0,len(neighboor.generations)-1,1):
-            aligned = organize_neighbour(neighboor.generations[generation].children)
-            K.append(aligned[len(aligned)//2])
-        
-        aligned = organize_neighbour(neighboor.generations[-1].children)
-        K.append(aligned[len(aligned)//2])
-        
-        neighbour.generations = K"""
+
     
         K = []
         for generation in range(0,len(neighboor.generations)-1,1):
@@ -142,7 +122,6 @@ def Build_Graph(image_link) :
 
     def leader_agent(point,ALL_CHILDREN={}):
 
-        start = time.time()
         ALL_CHILDREN[point] = 1
         starting_neibghour = NEIGHBORHOOD()
         first_generation = GENERATION([])
@@ -191,29 +170,13 @@ def Build_Graph(image_link) :
 
 
 
-        """
-            skeletons = list(map(lambda x:skeletonize(x),neighbouhoods["Arrived"]))
+    
 
-            Graph = {}
-
-            for skeleton in skeletons:
-                if len(skeleton) == 2:
-                    Graph[skeleton[0]] = {skeleton[1]}
-                    Graph[skeleton[1]] = {skeleton[0]}
-                elif len(skeleton) == 1:
-                    Graph[skeleton[0]] = {}
-                else:
-                    Graph[skeleton[0]] = {skeleton[1]}
-                    Graph[skeleton[-1]] = {skeleton[-2]}
-                    for join in range(1,len(skeleton)-1):
-                        Graph[skeleton[join]] = {skeleton[join+1],skeleton[join-1]}
-            
-        """
-        
         return neighbouhoods["Arrived"]
 
     BIJECTION = {}
     MAP = {}
+    ######   etat initiale ########
 
     for i in range(len(gray)):
         for j in range(len(gray[0])):
@@ -227,33 +190,46 @@ def Build_Graph(image_link) :
 
 
 
-        
 
-
-
-
+    def border_children(L):
+        bary = barycentre(L)
+        k = sorted(L,key=lambda l:((l[0] - bary[0])**2+(l[1]-bary[1])**2)**0.5,reverse=True)
+        if len(k) >= 2:
+            return k[0:2]
+        else:
+            return k
 
     #determine the frontiere of each neighbour
+    print("begin")
+    def FRONTIERE(MAP_network,CALCULATED={}):
+        for i in MAP_network:
+            for neighbour in MAP_network[i]:
+                for generation in neighbour.generations:
+                    
+                    for child in border_children(generation.children):
+                        potential_frontiere =  list(filter(lambda t: 0<=t[0]<img.size[0] and 0<=t[1]<img.size[1] and gray[t[1]][t[0]]==0 and not CALCULATED.get(t) ,[(child[0]-1,child[1]),(child[0]+1,child[1]),(child[0]-1,child[1]-1),(child[0],child[1]-1),(child[0]+1,child[1]-1),(child[0]-1,child[1]+1),(child[0],child[1]+1),(child[0]+1,child[1]+1)]))
+                        for point in potential_frontiere:
+                            neighbour.frontiere[BIJECTION[point]] = generation
+                            CALCULATED[point] = 1
+                    if neighbour.frontiere.get(generation):
+                        del neighbour.frontiere[generation]
 
-    for i in MAP:
-        for neighbour in MAP[i]:
-            for child in neighbour.generations[-1].children:
-                potential_frontiere =  list(filter(lambda t:0<=t[0]<img.size[0] and 0<=t[1]<img.size[1] and gray[t[1]][t[0]]==0 ,[(child[0]-1,child[1]),(child[0]+1,child[1]),(child[0]-1,child[1]-1),(child[0],child[1]-1),(child[0]+1,child[1]-1),(child[0]-1,child[1]+1),(child[0],child[1]+1),(child[0]+1,child[1]+1)]))
-                for point in potential_frontiere:
-                    neighbour.frontiere[BIJECTION[point]] = 1
-            if neighbour.frontiere.get(neighbour.generations[-1]):
-                del neighbour.frontiere[neighbour.generations[-1]]
 
+    FRONTIERE(MAP)
+
+
+    print("sucessful")
     # replace each generation with one point
+
+
     for i in MAP:
         for neighbour in MAP[i]:
             skeletonize(neighbour)
             
 
-
+    # etape de construction
 
     GRAPH = {}
-
     for i in MAP:
         for neighbour in MAP[i]:
             if len(neighbour.generations) == 2:
@@ -291,32 +267,69 @@ def Build_Graph(image_link) :
             
             
             for frontiere in neighbour.frontiere:
+
                 aligned = organize_neighbour(frontiere.children)
                 aligned = barycentre(aligned)
 
+                link_point = barycentre(neighbour.frontiere[frontiere].children)
+
+                GRAPH[link_point][aligned] = 1
+
+                if not GRAPH.get(aligned):
+
+                    GRAPH[aligned] = {link_point:1}
+
+                else:
+                    GRAPH[aligned].update({link_point:1})
+
+
+
+
+            """
                 GRAPH[neighbour.generations[-1]][aligned] = 1
 
                 if not GRAPH.get(aligned):
+
                     GRAPH[aligned] = {neighbour.generations[-1]:1}
+
                 else:
                     GRAPH[aligned].update({neighbour.generations[-1]:1})
-            
+            """
             
 
 
     graph = Graph.Graph()
-
     for i in GRAPH:
         graph.addVertex((i[0],i[1],0))
-
 
     for i in GRAPH:
         for j in GRAPH[i]:
             graph.addEdge(Graph.Vertex((i[0],i[1],0)),(j[0],j[1],0))
-
-
+    
 
     return graph
+
+    with open("EEEE.txt","wb") as file:
+        pickle.dump(graph,file)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
 
 
 

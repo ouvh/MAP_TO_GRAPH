@@ -2,6 +2,10 @@ from model import *
 import shader_program
 import numpy as np
 import vertex_provider,pickle,Graph
+import time
+
+
+
 
 class Scene:
     def __init__(self, app):
@@ -28,8 +32,9 @@ class Scene:
         """
         self.objects = []
 
+        self.data_batch = []
 
-        #self.objects.append(base_model_no_texturing(vertex_provider.get_icosahedron(100,(0,0,0)),shader_program.ShaderProgram(app.context,"default_no_texturing"),app,(1,0,0)))
+        #self.objects.append(base_model_no_texturing(vertex_provider.get_icosahedron(100,(0,0,0)),shader_program.ShaderProgram(app.context,"default_no_texturing"),app,(0.9,0.7,0.5)))
         
         with open("WWW.txt","rb") as file:
             WWW = pickle.load(file)
@@ -41,11 +46,10 @@ class Scene:
         
         for s in WWW:
             self.objects.append(base_model_no_texturing(np.array(s),shader_program.ShaderProgram(app.context,"default_no_texturing"),app,(1,0,0)))
-        
         for s in UUU:
             self.objects.append(base_model_no_texturing(np.array(s),shader_program.ShaderProgram(app.context,"default_no_texturing"),app,(0,1,0)))
         
-
+        
 
 
 

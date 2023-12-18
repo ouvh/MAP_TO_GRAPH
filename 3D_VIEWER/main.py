@@ -5,6 +5,7 @@ from model import *
 from camera import Camera
 from light import Light
 from scene import Scene
+import random
 
 
 class GraphicsEngine:
@@ -74,6 +75,7 @@ class GraphicsEngine:
 
     def run(self):
         while True:
+            #self.scene.objects[0].model_matrix = glm.translate(glm.mat4() , (random.randint(0,2),random.randint(0,2),random.randint(0,2))) #glm.vec3([glm.radians(random.randint(0,100)),glm.radians(random.randint(0,100)),glm.radians(random.randint(0,100))])
             self.get_time()
             self.check_events()
             self.camera.update()

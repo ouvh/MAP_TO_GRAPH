@@ -5,13 +5,21 @@ import pygame
 from shortest_path import Dijkstra
 from Image_to_Graph import Build_Graph
 
+import pickle
+
 image_link = "map.png"
 image = Image.open(image_link)
 
 run = True
 
-
+"""
 roads_graph = Build_Graph(image_link)
+"""
+with open("EEEE.txt","rb") as file:
+    roads_graph = pickle.load(file)
+
+
+
 display = pygame.display.set_mode(image.size)
 imagg = pygame.image.load(image_link)
 display.blit(imagg,(0,0))

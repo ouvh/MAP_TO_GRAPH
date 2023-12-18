@@ -102,6 +102,7 @@ class base_model_with_texturing:
         self.update()
         self.vertex_array_object.vertex_array_object.render()
     
+    
     def destroy(self):
         self.vertex_array_object.destroy()
 
