@@ -52,7 +52,7 @@ def organize_neighbour(L):
 def barycentre(pp):
     L = list(map(lambda h:complex(h[0],h[1]),pp))
     barycentree = sum(L,start=0)/len(L)
-    return (barycentree.real,barycentree.imag)
+    return (int(barycentree.real),int(barycentree.imag))
 
 
 

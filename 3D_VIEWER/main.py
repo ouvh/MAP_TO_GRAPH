@@ -6,6 +6,7 @@ from camera import Camera
 from light import Light
 from scene import Scene
 import random
+import threading
 
 
 class GraphicsEngine:
@@ -60,6 +61,14 @@ class GraphicsEngine:
                 pg.event.set_grab(False)
                 pg.mouse.set_visible(True)
             
+            elif event.type == pg.KEYDOWN and event.key == pg.K_RIGHT:
+                                    
+                
+
+                self.scene.pass_new_batch()
+
+               
+            
 
 
     def render(self):
@@ -71,6 +80,7 @@ class GraphicsEngine:
         pg.display.flip()
 
     def get_time(self):
+        
         self.time = pg.time.get_ticks() * 0.001
 
     def run(self):
@@ -81,6 +91,7 @@ class GraphicsEngine:
             self.camera.update()
             self.render()
             self.delta_time = self.clock.tick(60)
+
 
 
 if __name__ == '__main__':

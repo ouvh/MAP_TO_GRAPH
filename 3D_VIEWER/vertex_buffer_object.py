@@ -17,6 +17,9 @@ class Vertex_buffer_object_no_texturing:
     
     def destroy(self):
         self.vertex_buffer_object.release()
+    
+    
+
 
 
 class Vertex_buffer_object_with_texturing:

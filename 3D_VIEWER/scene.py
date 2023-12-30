@@ -2,7 +2,7 @@ from model import *
 import shader_program
 import numpy as np
 import vertex_provider,pickle,Graph
-import time
+import time,pickle
 
 
 
@@ -10,6 +10,8 @@ import time
 class Scene:
     def __init__(self, app):
         self.app = app
+
+        # first attemp
         """self.gr = Graph.Graph()
         a = Graph.Vertex(*(6, 2, 0))
         b = Graph.Vertex(*(1, 0, 5))
@@ -30,11 +32,12 @@ class Scene:
             for edg in self.gr.GraphMap[key]:
                 self.objects.append(base_model_no_texturing(vertex_provider.get_tunnel((key.m_x,key.m_y,key.m_z),(edg.m_destination.m_x,edg.m_destination.m_y,edg.m_destination.m_z),0.1),shader_program.ShaderProgram(app.context,"default_no_texturing"),app,(0,1,0)))
         """
-        self.objects = []
+        # normal behaviour
+        """self.objects = []
 
         self.data_batch = []
 
-        #self.objects.append(base_model_no_texturing(vertex_provider.get_icosahedron(100,(0,0,0)),shader_program.ShaderProgram(app.context,"default_no_texturing"),app,(0.9,0.7,0.5)))
+        self.objects.append(base_model_no_texturing(vertex_provider.get_icosahedron(100,(0,0,0)),shader_program.ShaderProgram(app.context,"default_no_texturing"),app,(0.9,0.7,0.5)))
         
         with open("WWW.txt","rb") as file:
             WWW = pickle.load(file)
@@ -50,21 +53,57 @@ class Scene:
             self.objects.append(base_model_no_texturing(np.array(s),shader_program.ShaderProgram(app.context,"default_no_texturing"),app,(0,1,0)))
         
         
+        """
+        self.index = 1
+        self.objects = []
+
+        #new batcing algorithm 
+        with open("META_3D_batches.txt","rb") as file:
+            self.batches = pickle.load(file)
+        
+
+        for i in self.batches[self.index][0]:
+            self.objects.append(base_model_no_texturing(np.array(i),shader_program.ShaderProgram(app.context,"default_no_texturing"),app,(0,1,0)))
+        
+        for i in self.batches[self.index][1]:
+            self.objects.append(base_model_no_texturing(np.array(i),shader_program.ShaderProgram(app.context,"default_no_texturing"),app,(1,0,0)))
+        
+
+        for i in self.batches[self.index][2]:
+            self.objects.append(base_model_no_texturing(np.array(i),shader_program.ShaderProgram(app.context,"default_no_texturing"),app,(0,1,0)))
+        
+        for i in self.batches[self.index][3]:
+            self.objects.append(base_model_no_texturing(np.array(i),shader_program.ShaderProgram(app.context,"default_no_texturing"),app,(1,0,0)))
+        
 
 
+    def pass_new_batch(self):
+        if self.index < len(self.batches):
 
+            start = time.time()
+            self.index += 1
+            print(self.index)
+            self.destroy()
+            self.objects = []
 
+            for i in self.batches[self.index][0]:
+                self.objects.append(base_model_no_texturing(np.array(i),shader_program.ShaderProgram(self.app.context,"default_no_texturing"),self.app,(0,1,0)))
+            
+            for i in self.batches[self.index][1]:
+                self.objects.append(base_model_no_texturing(np.array(i),shader_program.ShaderProgram(self.app.context,"default_no_texturing"),self.app,(1,0,0)))
+            
 
-
-    
+            for i in self.batches[self.index][2]:
+                self.objects.append(base_model_no_texturing(np.array(i),shader_program.ShaderProgram(self.app.context,"default_no_texturing"),self.app,(0,1,0)))
+            
+            for i in self.batches[self.index][3]:
+                self.objects.append(base_model_no_texturing(np.array(i),shader_program.ShaderProgram(self.app.context,"default_no_texturing"),self.app,(1,0,0)))
+            
+            print(time.time()-start)
 
 
 
         
-
-
-
-
     @staticmethod
     def get_data(vertices, indices):
         data = [vertices[ind] for triangle in indices for ind in triangle]
@@ -95,7 +134,6 @@ class Scene:
 
         vertex_data = np.hstack([normals, vertex_data])
         return vertex_data
-
 
     def add_object(self, obj):
         self.objects.append(obj)

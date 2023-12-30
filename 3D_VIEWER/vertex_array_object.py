@@ -18,6 +18,8 @@ class Vertex_array_object_no_texturing:
         self.vertex_buffer_object.destroy()
         self.shader_program.destroy()
         self.vertex_array_object.release()
+    
+   
 
 
 

@@ -12,11 +12,9 @@ image = Image.open(image_link)
 
 run = True
 
-"""
+
 roads_graph = Build_Graph(image_link)
-"""
-with open("EEEE.txt","rb") as file:
-    roads_graph = pickle.load(file)
+
 
 
 

@@ -3,7 +3,7 @@ from queue import PriorityQueue
 from Graph import Graph,Vertex
 import pickle
 
-distances = defaultdict(lambda: float('inf'))
+distances = defaultdict(lambda:float('inf'))
 predecessors = {}
 
 states = []
@@ -41,7 +41,7 @@ def Dijkstra(g,source,target) :
         path.append(current)  
         current = predecessors[current]
     path.append(source)
-    
+    print("yes")
     with open("states.txt","wb") as file:
         pickle.dump(states,file)
     
